@@ -19,7 +19,7 @@ public class JarvisController {
 	private final static ObjectMapper MAPPER = new ObjectMapper();
 
 	public JarvisController() throws URISyntaxException {
-		String path = getClass().getResource("").toURI().getPath();
+		String path = getClass().getResource("").getPath();
 		bot = new Bot("alice2",path.substring(0,path.length()-1), "chat");
 		chat = new Chat(bot);
 		bot.brain.nodeStats();
