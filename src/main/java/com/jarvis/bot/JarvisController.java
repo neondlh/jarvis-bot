@@ -48,6 +48,35 @@ public class JarvisController {
 //		Message message = new Message("Jarvis", response);
 //		return MAPPER.writeValueAsString(message);
 //	}
+	
+	private String parseFbRequest(){
+		
+	String accesstoken = "EAADmeR5hib8BAC5Dc8lpaXjnEHFKuAyLnjVJZAjH8ctFElQVO96xn9GSMDJsqyV0AJ09js0VBEmjLMBdORHEpQd3eTmjTiRTAECuLnZCqNcq2ZBtfTp8a1veHbOYkzqxyYM1JmZBEr8cdSmLDa1O0C5WIpzDK9QxNcNtili8jQZDZD";
+		try {
+			JsonNode root = mapper.readTree(fbRequest);
+			if (root != null) {
+				JsonNode entryNode = root.path("entry");
+				if (!entryNode.isMissingNode()) {
+					JsonNode firstEntryNode = entryNode.get(0);
+					JsonNode messagingNode = firstEntryNode.path("messaging");
+					if (!messagingNode.isMissingNode()) {
+						JsonNode firstMessagingNode = messagingNode.get(0);
+						JsonNode senderIdNode = firstMessagingNode.path("sender").path("id");
+						String sendId = senderIdNode.asText();
+						System.out.println(sendId);
+						String question = firstMessagingNode.path("message").path("text").asText();
+						System.out.println(question);
+					}
+				}
+			}
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<String> verifyWebhook(
