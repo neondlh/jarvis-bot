@@ -55,7 +55,7 @@ public class JarvisController {
 			@RequestParam("hub.verify_token") final String verifyToken,
 			@RequestParam("hub.challenge") final String challenge) {
 
-		logger.debug(
+		logger.error(
 				"Received Webhook verification request - mode: {} | verifyToken: {} | challenge: {}",
 				mode, verifyToken, challenge);
 		try {
@@ -71,7 +71,7 @@ public class JarvisController {
     public ResponseEntity<Void> handleCallback(@RequestBody final String payload,
                                                @RequestHeader(SIGNATURE_HEADER_NAME) final String signature) {
 
-        logger.debug("Received Messenger Platform callback - payload: {} | signature: {}", payload, signature);
+        logger.error("Received Messenger Platform callback - payload: {} | signature: {}", payload, signature);
         try {
             //this.receiveClient.processCallbackPayload(payload, signature);
             logger.debug("Processed callback payload successfully");
