@@ -20,7 +20,7 @@ public class JarvisController {
 
 	public JarvisController() throws URISyntaxException {
 		String path = getClass().getResource("").getPath();
-		bot = new Bot("alice2",path.substring(0,path.length()-1), "chat");
+		bot = new Bot("alice2",path.substring(0,path.length()-2), "chat");
 		chat = new Chat(bot);
 		bot.brain.nodeStats();
 	}
