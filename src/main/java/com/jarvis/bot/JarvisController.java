@@ -1,5 +1,7 @@
 package com.jarvis.bot;
 
+import static com.github.messenger4j.MessengerPlatform.SIGNATURE_HEADER_NAME;
+
 import java.net.URISyntaxException;
 
 import org.alicebot.ab.Bot;
@@ -8,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.messenger4j.exceptions.MessengerVerificationException;
 
 @RestController
 public class JarvisController {
@@ -36,10 +41,9 @@ public class JarvisController {
 		return "up an running";
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.GET)
 	public String chat(@RequestParam(value = "question") String question)
 			throws JsonProcessingException {
-		logger.debug("post from fb");
 		String response = chat.multisentenceRespond(question);
 		Message message = new Message("Jarvis", response);
 		return MAPPER.writeValueAsString(message);
@@ -62,4 +66,19 @@ public class JarvisController {
 					e.getMessage());
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Void> handleCallback(@RequestBody final String payload,
+                                               @RequestHeader(SIGNATURE_HEADER_NAME) final String signature) {
+
+        logger.debug("Received Messenger Platform callback - payload: {} | signature: {}", payload, signature);
+        try {
+            //this.receiveClient.processCallbackPayload(payload, signature);
+            logger.debug("Processed callback payload successfully");
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e) {
+            logger.warn("Processing of callback payload failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
 }
