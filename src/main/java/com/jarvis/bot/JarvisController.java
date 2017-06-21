@@ -2,6 +2,7 @@ package com.jarvis.bot;
 
 import static com.github.messenger4j.MessengerPlatform.SIGNATURE_HEADER_NAME;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.alicebot.ab.Bot;
@@ -16,15 +17,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.messenger4j.exceptions.MessengerVerificationException;
 
 @RestController
 public class JarvisController {
-	private static final Logger logger = LoggerFactory
-			.getLogger(JarvisController.class);
+	private static final Logger logger = LoggerFactory.getLogger(JarvisController.class);
+	private static final String verifyToken = "xyz123";
+	private static final String pageAccessToken = "EAADmeR5hib8BAC5Dc8lpaXjnEHFKuAyLnjVJZAjH8ctFElQVO96xn9GSMDJsqyV0AJ09js0VBEmjLMBdORHEpQd3eTmjTiRTAECuLnZCqNcq2ZBtfTp8a1veHbOYkzqxyYM1JmZBEr8cdSmLDa1O0C5WIpzDK9QxNcNtili8jQZDZD";
+	private final String requestUrl = String.format("https://graph.facebook.com/v2.8/me/messages?access_token=%s", new Object[] { pageAccessToken  });
+	private String sendId;
+	private String question;
+	private final String RESPONSE_FORMAT = "{\"recipient\": {\"id\": \"%s\"},\"message\": {\"text\": \"%s\"}}";
 	private Bot bot;
 	private Chat chat;
 	private final static ObjectMapper MAPPER = new ObjectMapper();
@@ -49,11 +56,9 @@ public class JarvisController {
 //		return MAPPER.writeValueAsString(message);
 //	}
 	
-	private String parseFbRequest(){
-		
-	String accesstoken = "EAADmeR5hib8BAC5Dc8lpaXjnEHFKuAyLnjVJZAjH8ctFElQVO96xn9GSMDJsqyV0AJ09js0VBEmjLMBdORHEpQd3eTmjTiRTAECuLnZCqNcq2ZBtfTp8a1veHbOYkzqxyYM1JmZBEr8cdSmLDa1O0C5WIpzDK9QxNcNtili8jQZDZD";
+	private void parseFbRequest(String fbRequest){
 		try {
-			JsonNode root = mapper.readTree(fbRequest);
+			JsonNode root = MAPPER.readTree(fbRequest);
 			if (root != null) {
 				JsonNode entryNode = root.path("entry");
 				if (!entryNode.isMissingNode()) {
@@ -62,18 +67,14 @@ public class JarvisController {
 					if (!messagingNode.isMissingNode()) {
 						JsonNode firstMessagingNode = messagingNode.get(0);
 						JsonNode senderIdNode = firstMessagingNode.path("sender").path("id");
-						String sendId = senderIdNode.asText();
-						System.out.println(sendId);
-						String question = firstMessagingNode.path("message").path("text").asText();
-						System.out.println(question);
+						sendId = senderIdNode.asText();
+						question = firstMessagingNode.path("message").path("text").asText();
 					}
 				}
 			}
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -84,9 +85,7 @@ public class JarvisController {
 			@RequestParam("hub.verify_token") final String verifyToken,
 			@RequestParam("hub.challenge") final String challenge) {
 
-		logger.error(
-				"Received Webhook verification request - mode: {} | verifyToken: {} | challenge: {}",
-				mode, verifyToken, challenge);
+		logger.error("Received Webhook verification request - mode: {} | verifyToken: {} | challenge: {}",mode, verifyToken, challenge);
 		try {
 			return ResponseEntity.ok(challenge);
 		} catch (Exception e) {
@@ -102,8 +101,13 @@ public class JarvisController {
 
         logger.error("Received Messenger Platform callback - payload: {} | signature: {}", payload, signature);
         try {
-            //this.receiveClient.processCallbackPayload(payload, signature);
-            logger.debug("Processed callback payload successfully");
+        	parseFbRequest(payload);
+        	logger.error("sendId: {} | question: {}", sendId, question);
+        	String response = "Test response";
+        	
+        	RestTemplate template = new RestTemplate();
+        	String result = template.postForObject(requestUrl, String.format(RESPONSE_FORMAT, sendId, response), String.class);
+            logger.error("Result: " + result);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
             logger.warn("Processing of callback payload failed: {}", e.getMessage());
