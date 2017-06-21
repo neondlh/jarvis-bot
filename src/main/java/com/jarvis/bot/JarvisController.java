@@ -1,15 +1,11 @@
 package com.jarvis.bot;
 
 import java.net.URISyntaxException;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.alicebot.ab.Bot;
 import org.alicebot.ab.Chat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.messenger4j.MessengerPlatform;
-import com.github.messenger4j.receive.MessengerReceiveClient;
-import com.github.messenger4j.send.MessengerSendClient;
 
 @RestController
 public class JarvisController {
@@ -31,9 +24,6 @@ public class JarvisController {
 	private Chat chat;
 	private final static ObjectMapper MAPPER = new ObjectMapper();
 
-	
-
-	@Autowired
 	public JarvisController() throws URISyntaxException {
 		String path = getClass().getResource("").getPath();
 		bot = new Bot("alice2", path, "chat");
