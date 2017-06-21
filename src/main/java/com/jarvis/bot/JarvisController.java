@@ -1,7 +1,6 @@
 package com.jarvis.bot;
 
 import java.net.URISyntaxException;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.alicebot.ab.Bot;
 import org.alicebot.ab.Chat;
@@ -20,7 +19,7 @@ public class JarvisController {
 	private final static ObjectMapper MAPPER = new ObjectMapper();
 
 	public JarvisController() throws URISyntaxException {
-		String path = this.getClass().getResource("").toURI().getPath();
+		String path = getClass().getResource("").getPath();
 		bot = new Bot("alice2",path, "chat");
 		chat = new Chat(bot);
 		bot.brain.nodeStats();
