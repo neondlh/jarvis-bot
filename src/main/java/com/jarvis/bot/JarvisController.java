@@ -14,10 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +41,7 @@ public class JarvisController {
 	private final static ObjectMapper MAPPER = new ObjectMapper();
 
 	public JarvisController() throws URISyntaxException {
-		String path = getClass().getResource("").getPath();
+		String path = "file:/app/target/jarvis-bot-1.0.0-SNAPSHOT.jar/BOOT-INF/classes/com/jarvis/bot";
 		bot = new Bot("alice2", path, "chat");
 		chat = new Chat(bot);
 		bot.brain.nodeStats();
