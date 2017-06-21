@@ -36,9 +36,10 @@ public class JarvisController {
 		return "up an running";
 	}
 
-	@RequestMapping("/chat")
+	@RequestMapping(method = RequestMethod.POST)
 	public String chat(@RequestParam(value = "question") String question)
 			throws JsonProcessingException {
+		logger.debug("post from fb");
 		String response = chat.multisentenceRespond(question);
 		Message message = new Message("Jarvis", response);
 		return MAPPER.writeValueAsString(message);
