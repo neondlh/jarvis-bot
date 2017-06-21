@@ -107,7 +107,41 @@ public class JarvisController {
         try {
         	parseFbRequest(payload);
         	logger.error("sendId: {} | question: {}", sendId, question);
-        	String response = "Test response";
+        	String response = "Hello!! How may i help you today?";
+		question = question.toLowerCase();
+		if(question.contains("jarvis") || question.contains("hi") || question.contains("hello")){
+			response = "Hi Rakesh, Hope you are having a wonderful day today. How may i help you?";			
+		}
+		else if(question.toLowerCase().contains("score")){
+			response = "Sure, let me check, I will be back soon..";
+			//send Response
+						        	RestTemplate template = new RestTemplate();
+        	String request = String.format(RESPONSE_FORMAT, sendId, response);
+        	
+        	
+        	HttpHeaders headers = new HttpHeaders();
+        	headers.setContentType(MediaType.APPLICATION_JSON);
+        	HttpEntity<String> requestEntity = new HttpEntity<String>(request, headers);
+
+        	
+			ResponseEntity<String> result = template.exchange(requestUrl, HttpMethod.POST, requestEntity,String.class);
+			
+            logger.error("Result: " + result.getBody());
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			response = "I found your score, its 713, same as yesterday. Is there something else which with which i can help?";
+
+		}
+		else if(question.toLowerCase().contains("thank")){
+			response = "You are welcome";
+		}
+		else {
+			response = "I did not understand your question, can you explain more about it?";
+		}
         	
         	RestTemplate template = new RestTemplate();
         	String request = String.format(RESPONSE_FORMAT, sendId, response);
