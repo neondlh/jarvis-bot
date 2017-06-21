@@ -40,14 +40,14 @@ public class JarvisController {
 	public String status() {
 		return "up an running";
 	}
-
-	@RequestMapping(method = RequestMethod.GET)
-	public String chat(@RequestParam(value = "question") String question)
-			throws JsonProcessingException {
-		String response = chat.multisentenceRespond(question);
-		Message message = new Message("Jarvis", response);
-		return MAPPER.writeValueAsString(message);
-	}
+//
+//	@RequestMapping(method = RequestMethod.GET)
+//	public String chat(@RequestParam(value = "question") String question)
+//			throws JsonProcessingException {
+//		String response = chat.multisentenceRespond(question);
+//		Message message = new Message("Jarvis", response);
+//		return MAPPER.writeValueAsString(message);
+//	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<String> verifyWebhook(
